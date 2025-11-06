@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head><meta charset='utf-8'><title>People (Mongo+Redis)</title></head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+<h2>People (Mongo + Redis cache)</h2>
+<form id="form">
+  <input id="given" placeholder="Given" required>
+  <input id="family" placeholder="Family" required>
+  <input id="email" placeholder="Email" required type="email">
+  <button>Add</button>
+</form>
+<ul id="list"></ul>
+<script>
+async function refresh(){ const res=await fetch('/api/persons'); const data=await res.json(); const ul=document.getElementById('list'); ul.innerHTML=''; data.forEach(p=>{const li=document.createElement('li'); li.textContent=`${p.id} - ${p.given} ${p.family} (${p.email})`; ul.appendChild(li); }); }
+document.getElementById('form').onsubmit = async (e)=>{ e.preventDefault(); await fetch('/person/create', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:`given=${encodeURIComponent(document.getElementById('given').value)}&family=${encodeURIComponent(document.getElementById('family').value)}&email=${encodeURIComponent(document.getElementById('email').value)}` }); document.getElementById('given').value='';document.getElementById('family').value='';document.getElementById('email').value=''; refresh(); }
+refresh();
+</script>
+</body>
+</html>
